@@ -1,2 +1,2 @@
 # AML-Project
-Deep fake  image detection
+Deep fake  Image Detection

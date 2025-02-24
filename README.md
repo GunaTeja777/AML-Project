@@ -29,3 +29,34 @@ Use Flask, FastAPI, or Streamlit for deployment.
 Handling high-resolution and low-resolution deepfakes.
 Ensuring the model generalizes well to unseen datasets.
 Detecting audio deepfakes if required.
+
+#what all i should learn
+1. Python & Libraries
+Python Basics (if not already familiar)
+Libraries: NumPy, Pandas, OpenCV, Matplotlib, Seaborn
+🔹 2. Computer Vision & Image Processing
+OpenCV (face detection, image manipulation)
+Dlib (facial landmarks, deepfake artifacts)
+Mediapipe (for face tracking and analysis)
+🔹 3. Deep Learning Basics
+Neural Networks (ANN, CNN, RNN basics)
+Activation functions (ReLU, Sigmoid, Softmax)
+Loss functions (Cross-Entropy, Binary Classification Losses)
+🔹 4. Deepfake-Specific Techniques
+CNN Architectures (ResNet, EfficientNet, Xception – commonly used for deepfake detection)
+Autoencoders & GANs (to understand how deepfakes are generated)
+Vision Transformers (ViTs) (optional but useful for advanced detection)
+Motion Analysis (for video-based deepfake detection)
+🔹 5. Model Training & Evaluation
+Transfer Learning (using pre-trained models like Xception, EfficientNet)
+Hyperparameter Tuning (learning rate, batch size, epochs)
+Evaluation Metrics (Accuracy, Precision, Recall, F1-score, AUC-ROC)
+🔹 6. Working with Deepfake Datasets
+DFDC (DeepFake Detection Challenge)
+FaceForensics++
+Celeb-DF, DeepFake-TIMIT
+Dataset Preprocessing (frame extraction, resizing, normalization)
+🔹 7. Model Deployment & API Development
+Flask / FastAPI (to create an API for deepfake detection)
+Streamlit / Gradio (for simple web-based model UI)
+TensorFlow.js / ONNX (if deploying for mobile/web apps)

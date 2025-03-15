@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deepfake Detection Result</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding-top: 50px;
+        }
+        .result-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        .result-image {
+            max-width: 100%;
+            max-height: 400px;
+            margin: 20px auto;
+            display: block;
+            border-radius: 5px;
+        }
+        .result-real {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .result-fake {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .progress {
+            height: 30px;
+            margin: 20px 0;
+        }
+        .progress-bar-real {
+            background-color:rgb(23, 250, 2);
+        }
+        .progress-bar-fake {
+            background-color:rgb(219, 12, 12);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="result-container">
+                    <h1 class="text-center mb-4">Detection Result</h1>
+                    
+                    <div class="text-center">
+                        <img src="{{ url_for('static', filename='uploads/' + image_file) }}" class="result-image" alt="Analyzed image">
+                    </div>
+                    
+                    <div class="analysis-result text-center">
+                        <h2>This image is likely 
+                            {% if result == "REAL" %}
+                                <span class="result-real">REAL</span>
+                            {% else %}
+                                <span class="result-fake">FAKE</span>
+                            {% endif %}
+                        </h2>
+                        
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-real" role="progressbar" 
+                                 style="width: {{ probability }}%;" 
+                                 aria-valuenow="{{ probability }}" aria-valuemin="0" aria-valuemax="100">
+                                {{ probability|round(1) }}% REAL
+                            </div>
+                            <div class="progress-bar progress-bar-fake" role="progressbar" 
+                                 style="width: {{ 100 - probability }}%;" 
+                                 aria-valuenow="{{ 100 - probability }}" aria-valuemin="0" aria-valuemax="100">
+                                {{ (100 - probability)|round(1) }}% FAKE
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <p class="lead">
+                                Our model predicts this is a {% if result == "REAL" %}genuine{% else %}deepfake{% endif %} image with {{ probability|round(1) }}% confidence.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        <a href="/" class="btn btn-primary">Analyze Another Image</a>
+                    </div>
+                    
+                    <div class="mt-5">
+                        <div class="alert alert-secondary">
+                            <strong>Note:</strong> This analysis is based on a machine learning model and should be used for informational purposes only. The model may not detect all deepfakes or may occasionally misclassify genuine images.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

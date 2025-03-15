@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deepfake Detection System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding-top: 50px;
+        }
+        .main-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        .upload-area {
+            border: 2px dashed #007bff;
+            border-radius: 5px;
+            padding: 30px;
+            text-align: center;
+            margin: 20px 0;
+            cursor: pointer;
+        }
+        .upload-area:hover {
+            background-color: rgba(0, 123, 255, 0.05);
+        }
+        #preview {
+            max-width: 100%;
+            max-height: 300px;
+            margin-top: 20px;
+            display: none;
+        }
+        .flash-messages {
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="main-container">
+                    <h1 class="text-center mb-4">Deepfake Detection System</h1>
+                    
+                    <div class="flash-messages">
+                        {% with messages = get_flashed_messages() %}
+                            {% if messages %}
+                                {% for message in messages %}
+                                    <div class="alert alert-warning">{{ message }}</div>
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+                    
+                    <form action="/detect" method="post" enctype="multipart/form-data">
+                        <div class="upload-area" onclick="document.getElementById('file').click();">
+                            <img src="" id="preview" alt="Image preview">
+                            <div id="upload-text">
+                                <i class="fas fa-cloud-upload-alt fa-3x mb-3"></i>
+                                <h4>Drag and drop an image here</h4>
+                                <p>Or click to select a file</p>
+                            </div>
+                        </div>
+                        <input type="file" name="file" id="file" accept=".jpg, .jpeg, .png" style="display: none;" onchange="previewImage(this);">
+                        <div class="text-center mt-3">
+                            <button type="submit" class="btn btn-primary btn-lg">Detect Deepfake</button>
+                        </div>
+                    </form>
+                    
+                    <div class="mt-4">
+                        <h4>How it works:</h4>
+                        <p>This system uses a deep learning model to analyze images and detect if they're likely to be deepfakes or genuine images. Simply upload an image, and our model will process it to determine its authenticity.</p>
+                        <div class="alert alert-info">
+                            <strong>Note:</strong> For best results, upload clear, well-lit images of faces. The model has been trained on a dataset of real and fake images to recognize patterns that indicate manipulation.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <script>
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    document.getElementById('preview').style.display = 'block';
+                    document.getElementById('preview').src = e.target.result;
+                    document.getElementById('upload-text').style.display = 'none';
+                }
+                
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        
+        // Reset preview when the form is reset
+        document.querySelector('form').addEventListener('reset', function() {
+            document.getElementById('preview').style.display = 'none';
+            document.getElementById('upload-text').style.display = 'block';
+        });
+    </script>
+</body>
+</html>

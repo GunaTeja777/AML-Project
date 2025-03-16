@@ -20,7 +20,7 @@ model = None
 def load_model():
     global model
     try:
-        model = tf.keras.models.load_model('deepfake_detector_final.h5')
+        model = tf.keras.models.load_model(r"C:\Users\tejag\OneDrive\Desktop\AIML project\AML-Project\deepfake_detector_final.h5")
         print("Model loaded successfully!")
     except Exception as e:
         print(f"Error loading model: {e}")

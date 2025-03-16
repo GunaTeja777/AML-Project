@@ -3,84 +3,586 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deepfake Detection System</title>
+    <title>DeepGuard - Advanced Deepfake Detection System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
     <style>
+        :root {
+            --primary: #0466c8;
+            --primary-dark: #0353a4;
+            --secondary: #001233;
+            --accent: #48cae4;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #38b000;
+            --border-radius: 12px;
+        }
+        
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
         body {
-            background-color: #f8f9fa;
-            padding-top: 50px;
+            background: linear-gradient(135deg, #001233 0%, #001845 100%);
+            color: var(--light);
         }
-        .main-container {
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 30px;
-            margin-bottom: 30px;
+        
+        .full-screen-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
-        .upload-area {
-            border: 2px dashed #007bff;
-            border-radius: 5px;
-            padding: 30px;
+        
+        .navbar {
+            background-color: rgba(0, 18, 51, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 15px 0;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: white;
+            display: flex;
+            align-items: center;
+        }
+        
+        .navbar-brand i {
+            margin-right: 10px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+            margin: 0 10px;
+            transition: all 0.3s;
+        }
+        
+        .nav-link:hover {
+            color: white;
+        }
+        
+        .nav-link.active {
+            color:white;
+        }
+        
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 60px 0;
+        }
+        
+        .ai-badge {
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            color: white;
+            padding: 5px 15px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            margin-left: 15px;
+        }
+        
+        .ai-badge i {
+            margin-right: 5px;
+        }
+        
+        .page-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, #ffffff, #48cae4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             text-align: center;
-            margin: 20px 0;
-            cursor: pointer;
         }
-        .upload-area:hover {
-            background-color: rgba(0, 123, 255, 0.05);
+        
+        .subtitle {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 40px;
+            text-align: center;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
         }
-        #preview {
-            max-width: 100%;
-            max-height: 300px;
+        
+        .upload-section {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 40px;
             margin-top: 20px;
-            display: none;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+            width: 100%;
         }
-        .flash-messages {
+        
+        .upload-area {
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        .upload-area:hover {
+            border-color: var(--accent);
+            background-color: rgba(255, 255, 255, 0.08);
+            transform: translateY(-5px);
+        }
+        
+        .upload-icon {
+            font-size: 5rem;
+            color: var(--accent);
+            margin-bottom: 25px;
+            transition: all 0.3s;
+        }
+        
+        .upload-area:hover .upload-icon {
+            transform: scale(1.1);
+        }
+        
+        .upload-heading {
+            font-size: 2rem;
+            font-weight: 600;
             margin-bottom: 15px;
+            color: white;
+        }
+        
+        .upload-text {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.1rem;
+            max-width: 80%;
+            text-align: center;
+        }
+        
+        .supported-formats {
+            margin-top: 20px;
+            padding: 8px 20px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        #preview {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: none;
+            z-index: 2;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+        }
+        
+        .preview-controls {
+            display: none;
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            z-index: 3;
+        }
+        
+        .btn-analyze {
+            background: linear-gradient(to right, var(--primary), var(--primary-dark));
+            color: white;
+            font-size: 1.2rem;
+            padding: 15px 50px;
+            border-radius: 50px;
+            font-weight: 600;
+            box-shadow: 0 10px 20px rgba(4, 102, 200, 0.3);
+            border: none;
+            transition: all 0.3s;
+            margin-top: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-analyze:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(4, 102, 200, 0.4);
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+        }
+        
+        .btn-analyze::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transform: translateX(-100%);
+        }
+        
+        .btn-analyze:hover::after {
+            animation: shine 1.5s infinite;
+        }
+        
+        @keyframes shine {
+            100% {
+                transform: translateX(100%);
+            }
+        }
+        
+        .btn-remove {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        
+        .btn-remove:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .features-section {
+            padding: 60px 0;
+            background-color: rgba(0, 18, 51, 0.5);
+            backdrop-filter: blur(10px);
+            margin-top: 60px;
+        }
+        
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 50px;
+            text-align: center;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 15px;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            border-radius: 2px;
+        }
+        
+        .feature-card {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            height: 100%;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            background-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .feature-icon-wrapper {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
+        
+        .feature-icon-large {
+            font-size: 2.5rem;
+            color: white;
+        }
+        
+        .feature-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: white;
+        }
+        
+        .feature-description {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.1rem;
+            line-height: 1.6;
+            flex-grow: 1;
+        }
+        
+        .alert {
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            background-color: rgba(255, 193, 7, 0.1);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+        }
+        
+        .alert-icon {
+            font-size: 1.8rem;
+            color: #ffc107;
+            margin-right: 15px;
+        }
+        
+        footer {
+            background-color: rgba(0, 12, 36, 0.9);
+            padding: 30px 0;
+            backdrop-filter: blur(10px);
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .footer-logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+        }
+        
+        .footer-logo span {
+            color: var(--accent);
+        }
+        
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            margin: 0 15px;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+        }
+        
+        .footer-copyright {
+            margin-top: 20px;
+            color: rgba(255, 255, 255, 0.5);
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 992px) {
+            .page-title {
+                font-size: 2.8rem;
+            }
+            
+            .upload-area {
+                height: 400px;
+            }
+            
+            .upload-heading {
+                font-size: 1.8rem;
+            }
+            
+            .feature-card {
+                margin-bottom: 30px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .page-title {
+                font-size: 2.3rem;
+            }
+            
+            .subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .upload-section {
+                padding: 20px;
+            }
+            
+            .upload-area {
+                height: 350px;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .footer-logo {
+                margin-bottom: 20px;
+            }
+            
+            .footer-links {
+                margin-bottom: 20px;
+            }
+            
+            .footer-links a {
+                margin: 0 10px;
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="main-container">
-                    <h1 class="text-center mb-4">Deepfake Detection System</h1>
-                    
-                    <div class="flash-messages">
-                        {% with messages = get_flashed_messages() %}
-                            {% if messages %}
-                                {% for message in messages %}
-                                    <div class="alert alert-warning">{{ message }}</div>
-                                {% endfor %}
-                            {% endif %}
-                        {% endwith %}
-                    </div>
-                    
-                    <form action="/detect" method="post" enctype="multipart/form-data">
+    <div class="full-screen-container">
+        <!-- Navigation -->
+        <nav class="navbar navbar-expand-lg fixed-top">
+            <div class="container">
+                <a class="navbar-brand" href="#">
+                    <i class="fas fa-shield-alt"></i>DeepGuard
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <i class="fas fa-bars" style="color: white;"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#">Home</a>
+                        </li>
+                       
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="container">
+                <h1 class="page-title">Advanced Deepfake Detection System</h1>
+                <p class="subtitle">Leveraging cutting-edge AI technology to detect manipulated media with precision and reliability. Our system identifies visual inconsistencies that are invisible to the human eye.</p>
+                
+                <div class="flash-messages">
+                    {% with messages = get_flashed_messages() %}
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert">
+                                    <div class="alert-icon">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                    </div>
+                                    <div>
+                                        {{ message }}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                </div>
+                
+                <div class="upload-section">
+                    <form action="/detect" method="post" enctype="multipart/form-data" id="upload-form">
                         <div class="upload-area" onclick="document.getElementById('file').click();">
                             <img src="" id="preview" alt="Image preview">
                             <div id="upload-text">
-                                <i class="fas fa-cloud-upload-alt fa-3x mb-3"></i>
-                                <h4>Drag and drop an image here</h4>
-                                <p>Or click to select a file</p>
+                                <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                                <h2 class="upload-heading">Drop your image here for analysis</h2>
+                                <p class="upload-text">Our advanced AI will analyze the image for signs of manipulation and generate a detailed report.</p>
+                                <div class="supported-formats">
+                                    <i class="fas fa-file-image me-2"></i>Supported formats: JPG, JPEG, PNG
+                                </div>
+                            </div>
+                            <div class="preview-controls">
+                                <button type="button" class="btn-remove" onclick="removePreview(event)">
+                                    <i class="fas fa-times"></i>
+                                </button>
                             </div>
                         </div>
                         <input type="file" name="file" id="file" accept=".jpg, .jpeg, .png" style="display: none;" onchange="previewImage(this);">
-                        <div class="text-center mt-3">
-                            <button type="submit" class="btn btn-primary btn-lg">Detect Deepfake</button>
+                        <div class="text-center">
+                            <button type="submit" class="btn-analyze">
+                                <i class="fas fa-search me-2"></i>Analyze Image
+                            </button>
                         </div>
                     </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div class="features-section">
+            <div class="container">
+                <div class="text-center mb-5">
+                    <h2 class="section-title">Technology Features</h2>
+                </div>
+                
+                <div class="row">
+                    <div class="col-lg-4 mb-4">
+                        <div class="feature-card">
+                            <div class="feature-icon-wrapper">
+                                <i class="fas fa-brain feature-icon-large"></i>
+                            </div>
+                            <h3 class="feature-title">Deep Learning Analysis</h3>
+                            <p class="feature-description">Our system employs advanced convolutional neural networks to detect subtle patterns and inconsistencies in image data that indicate manipulation, including those invisible to the human eye.</p>
+                        </div>
+                    </div>
                     
-                    <div class="mt-4">
-                        <h4>How it works:</h4>
-                        <p>This system uses a deep learning model to analyze images and detect if they're likely to be deepfakes or genuine images. Simply upload an image, and our model will process it to determine its authenticity.</p>
-                        <div class="alert alert-info">
-                            <strong>Note:</strong> For best results, upload clear, well-lit images of faces. The model has been trained on a dataset of real and fake images to recognize patterns that indicate manipulation.
+                    <div class="col-lg-4 mb-4">
+                        <div class="feature-card">
+                            <div class="feature-icon-wrapper">
+                                <i class="fas fa-fingerprint feature-icon-large"></i>
+                            </div>
+                            <h3 class="feature-title">Digital Forensics</h3>
+                            <p class="feature-description">We examine digital fingerprints, noise patterns, and compression artifacts that are characteristic of AI-generated content, providing forensic-level analysis of suspected deepfakes.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-4 mb-4">
+                        <div class="feature-card">
+                            <div class="feature-icon-wrapper">
+                                <i class="fas fa-shield-alt feature-icon-large"></i>
+                            </div>
+                            <h3 class="feature-title">Privacy Protected</h3>
+                            <p class="feature-description">Your privacy is our priority. All uploaded images are analyzed securely using encrypted connections and are never stored permanently in our system after analysis is complete.</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- Footer -->
+        <footer>
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-logo">Deep<span>Guard</span></div>
+                    <div class="footer-links">
+                        <a href="#">Privacy Policy</a>
+                        <a href="#">Terms of Service</a>
+                        <a href="#">Contact Us</a>
+                        <a href="#">FAQ</a>
+                    </div>
+                </div>
+                <div class="footer-copyright">
+                    © 2025 DeepGuard Deepfake Detection System | For educational and informational purposes only
+                </div>
+            </div>
+        </footer>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
@@ -94,17 +596,20 @@
                     document.getElementById('preview').style.display = 'block';
                     document.getElementById('preview').src = e.target.result;
                     document.getElementById('upload-text').style.display = 'none';
+                    document.querySelector('.preview-controls').style.display = 'block';
                 }
                 
                 reader.readAsDataURL(input.files[0]);
             }
         }
         
-        // Reset preview when the form is reset
-        document.querySelector('form').addEventListener('reset', function() {
+        function removePreview(e) {
+            e.stopPropagation();
+            document.getElementById('file').value = '';
             document.getElementById('preview').style.display = 'none';
             document.getElementById('upload-text').style.display = 'block';
-        });
+            document.querySelector('.preview-controls').style.display = 'none';
+        }
     </script>
 </body>
 </html>

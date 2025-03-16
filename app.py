@@ -20,7 +20,7 @@ model = None
 def load_model():
     global model
     try:
-        model = tf.keras.models.load_model('deepfake_detector_final.h5')
+        model = tf.keras.models.load_model(r"C:\Users\tejag\OneDrive\Desktop\AIML project\AML-Project\deepfake_EfficientNet.h5")
         print("Model loaded successfully!")
     except Exception as e:
         print(f"Error loading model: {e}")
@@ -70,7 +70,8 @@ def detect_deepfake():
             # Assuming a binary classification where higher = more likely to be fake
             score = float(prediction[0][0])
             probability = score * 100
-            result = "REAL" if score > 0.5 else "FAKE"
+            result = "REAL" if score > 0.5 else "FALSE"
+
             
             return render_template('result.html', 
                                   image_file=filename, 

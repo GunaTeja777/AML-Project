@@ -3,66 +3,262 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deepfake Detection Result</title>
+    <title>DeepGuard - Deepfake Detection Result</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
     <style>
+        :root {
+            --primary-color: #40a9ff;
+            --secondary-color: #001233;
+            --accent-color: #4cc9f0;
+            --success-color: #06d6a0;
+            --danger-color: #ef476f;
+            --dark-bg: #001440;
+            --darker-bg: #000c2d;
+            --border-radius: 8px;
+        }
+        
         body {
-            background-color: #f8f9fa;
-            padding-top: 50px;
+            background-color: var(--dark-bg);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding-top: 60px;
+            color: #fff;
+            min-height: 100vh;
         }
+        
         .result-container {
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 30px;
+            background-color: rgba(1, 22, 64, 0.7);
+            border-radius: var(--border-radius);
+            border: 1px solid rgba(64, 169, 255, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .navbar {
+            background-color: var(--darker-bg);
+            padding: 15px 0;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .navbar-brand span {
+            color: var(--primary-color);
+        }
+        
+        .page-title {
+            color: #fff;
+            font-weight: 700;
             margin-bottom: 30px;
+            position: relative;
+            display: inline-block;
         }
-        .result-image {
-            max-width: 100%;
-            max-height: 400px;
+        
+        .page-title span {
+            color: var(--accent-color);
+        }
+        
+        .page-title:after {
+            content: '';
+            position: absolute;
+            width: 60%;
+            height: 3px;
+            background-color: var(--primary-color);
+            bottom: -10px;
+            left: 0;
+            border-radius: 2px;
+        }
+        
+        .result-badge {
+            padding: 10px 20px;
+            border-radius: 30px;
+            color: white;
+            font-weight: 700;
+            font-size: 1.2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
             margin: 20px auto;
-            display: block;
-            border-radius: 5px;
+            display: inline-block;
         }
+        
+        .badge-real {
+            background: linear-gradient(135deg, var(--success-color), #099e76);
+        }
+        
+        .badge-fake {
+            background: linear-gradient(135deg, var(--danger-color), #d1365e);
+        }
+        
         .result-real {
-            color: #28a745;
+            color: var(--success-color);
             font-weight: bold;
         }
+        
         .result-fake {
-            color: #dc3545;
+            color: var(--danger-color);
             font-weight: bold;
         }
+        
         .progress {
-            height: 30px;
-            margin: 20px 0;
+            height: 40px;
+            margin: 30px 0;
+            border-radius: 20px;
+            background-color: rgba(255, 255, 255, 0.1);
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
         }
+        
+        .progress-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            transition: width 1.5s ease;
+            font-size: 1rem;
+        }
+        
         .progress-bar-real {
-            background-color:rgb(23, 250, 2);
+            background: linear-gradient(90deg, var(--success-color), #099e76);
+            border-radius: 20px 0 0 20px;
         }
+        
         .progress-bar-fake {
-            background-color:rgb(219, 12, 12);
+            background: linear-gradient(90deg, var(--danger-color), #d1365e);
+            border-radius: 0 20px 20px 0;
+        }
+        
+        .confidence-details {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .confidence-item {
+            text-align: center;
+            padding: 15px;
+            border-radius: 8px;
+            flex: 1;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .confidence-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .confidence-real {
+            background: linear-gradient(135deg, rgba(6, 214, 160, 0.1) 0%, rgba(6, 214, 160, 0.2) 100%);
+            border: 1px solid rgba(6, 214, 160, 0.3);
+        }
+        
+        .confidence-fake {
+            background: linear-gradient(135deg, rgba(239, 71, 111, 0.1) 0%, rgba(239, 71, 111, 0.2) 100%);
+            border: 1px solid rgba(239, 71, 111, 0.3);
+        }
+        
+        .confidence-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+        
+        .confidence-label {
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .analysis-result {
+            background: rgba(1, 22, 64, 0.5);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            margin-bottom: 30px;
+            border: 1px solid rgba(64, 169, 255, 0.2);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            border-radius: 6px;
+            padding: 12px 30px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(64, 169, 255, 0.3);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(76, 201, 240, 0.4);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+            background-color: var(--darker-bg);
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">Deep<span>Guard</span></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/">Home</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-md-8">
+            <div class="col-lg-9">
                 <div class="result-container">
-                    <h1 class="text-center mb-4">Detection Result</h1>
-                    
-                    <div class="text-center">
-                        <img src="{{ url_for('static', filename='uploads/' + image_file) }}" class="result-image" alt="Analyzed image">
+                    <div class="d-flex justify-content-center mb-4">
+                        <h1 class="page-title text-center">Deepfake Detection <span>Result</span></h1>
                     </div>
                     
-                    <div class="analysis-result text-center">
-                        <h2>This image is likely 
-                            {% if result == "REAL" %}
-                                <span class="result-real">REAL</span>
-                            {% else %}
-                                <span class="result-fake">FAKE</span>
-                            {% endif %}
-                        </h2>
+                    <div class="text-center">
+                        <div class="result-badge {% if result == 'REAL' %}badge-real{% else %}badge-fake{% endif %}">
+                            <i class="fas {% if result == 'REAL' %}fa-check-circle{% else %}fa-exclamation-triangle{% endif %} me-2"></i>
+                            {{ result }}
+                        </div>
+                    </div>
+                    
+                    <div class="analysis-result">
+                        <h2 class="text-center mb-4">Analysis Summary</h2>
+                        
+                        <div class="confidence-details">
+                            <div class="confidence-item confidence-real">
+                                <div class="confidence-label">Authentic Probability</div>
+                                <div class="confidence-value">{{ probability|round(1) }}%</div>
+                                <div class="confidence-description">Likelihood of being real</div>
+                            </div>
+                            
+                            <div class="confidence-item confidence-fake">
+                                <div class="confidence-label">Deepfake Probability</div>
+                                <div class="confidence-value">{{ (100 - probability)|round(1) }}%</div>
+                                <div class="confidence-description">Likelihood of being manipulated</div>
+                            </div>
+                        </div>
                         
                         <div class="progress">
                             <div class="progress-bar progress-bar-real" role="progressbar" 
@@ -77,26 +273,27 @@
                             </div>
                         </div>
                         
-                        <div class="mt-4">
+                        <div class="summary-text text-center mt-4">
                             <p class="lead">
-                                Our model predicts this is a {% if result == "REAL" %}genuine{% else %}deepfake{% endif %} image with {{ probability|round(1) }}% confidence.
+                                Our AI model has determined this content is most likely 
+                                <span class="{% if result == 'REAL' %}result-real{% else %}result-fake{% endif %}">{{ result }}</span>
                             </p>
                         </div>
                     </div>
                     
                     <div class="text-center mt-4">
-                        <a href="/" class="btn btn-primary">Analyze Another Image</a>
-                    </div>
-                    
-                    <div class="mt-5">
-                        <div class="alert alert-secondary">
-                            <strong>Note:</strong> This analysis is based on a machine learning model and should be used for informational purposes only. The model may not detect all deepfakes or may occasionally misclassify genuine images.
-                        </div>
+                        <a href="/" class="btn btn-primary">Analyze Another</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    
+    <footer>
+        <div class="container">
+            <p>© 2025 DeepGuard - Advanced Deepfake Detection Technology</p>
+        </div>
+    </footer>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </body>

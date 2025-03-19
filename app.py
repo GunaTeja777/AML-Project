@@ -71,7 +71,7 @@ def detect_deepfake():
             # Assuming a binary classification where higher = more likely to be fake
             score = float(prediction[0][0])
             probability = score * 100
-            result = "REAL" if score > 0.5 else "FALSE"
+            result = "REAL" if score > 0.5 else "FAKE"
 
             
             return render_template('result.html', 
